@@ -22,10 +22,10 @@
 # Project Execution
  Для завантаження даних в Event Hub або Redis, необхідно виконати POST запит до localhost:9000/url із відповідним request body. Це можливо зробити за допомогою:
   Postman - встановлюємо значення application/json для хедера Content-Type і додаємо валідне тіло запиту:
-     ``` sh  {
+       {
         "url": "https://XXX/YYY.json",
         "strategy": "eventHub|redis"
-       } ```
+       } 
  
  Програма логуватиме усі необхідні дані відповідно до логіки задачі. Для перевірки надісланих даних:
   1. Event Hub Ваш Event Hub > Features > Proccess Data > Explore
