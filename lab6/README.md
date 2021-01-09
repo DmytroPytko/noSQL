@@ -72,9 +72,9 @@
    сервіси є в робочому стані.
   ![elastic-available](../img/lab6/elastic-available.png)
   ![els-available](../img/lab6/els-available.png)
+  ![lab6](../img/lab6/lab6.png)
    
    
-
 # Azure Preparation
 
 1. Створюємо нову resource group або ж використовуємо попередню, створену під час виконання 5 лабораторної роботи.
