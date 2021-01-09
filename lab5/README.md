@@ -13,7 +13,7 @@
   2a.Створюємо Shared Access Policy для генерації Connection String та Primary Key, що слугуватимуть як дані для надання доступу до нашого ресурсу з боку Jedis і його програмного виклику.
   ![redis](../img/lab5/redis.png)
  3. Створюємо Event Hub Namespace.
- ![event-hub](../img/lab55/event-hub.png)
+ ![event-hub](../img/lab5/event-hub.png)
    3a. Створюємо дочірній Event Hub Instance.
    ![event-hub-instance](../img/lab5/event-hub-instance.png)
    3b. Створюємо також Shared Access Policy для генерації Connection String та Primary Key, що слугуватимуть як дані для авторизації клієнта і його програмного виклику.
