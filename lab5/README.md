@@ -16,16 +16,16 @@
    3b. Створюємо також Shared Access Policy для генерації Connection String та Primary Key, що слугуватимуть як дані для авторизації клієнта і його програмного виклику.
 
 # Project Customization And Setup
- 1. Вставте необхідні дані в файл src\main\java\com\lab5\resteventhub\service\ SendDataConsoleImpl та SendDataEventhubimpl (CACHE_HOSTNAME, CACHE_KEY, MAP_NAME, FILE_NAME, NamespaceName, EventHubName, SasKeyName, SasKey)
+ 1. Вставте необхідні дані в файл ``` sh src\main\java\com\lab5\resteventhub\service\ SendDataConsoleImpl та SendDataEventhubimpl (CACHE_HOSTNAME, CACHE_KEY, MAP_NAME, FILE_NAME, NamespaceName, EventHubName, SasKeyName, SasKey) ```
  2. Запускаємо апку напряму в src\main\java\com\lab5\resteventhub\RestEventHubApplication
 
 # Project Execution
  Для завантаження даних в Event Hub або Redis, необхідно виконати POST запит до localhost:9000/url із відповідним request body. Це можливо зробити за допомогою:
   Postman - встановлюємо значення application/json для хедера Content-Type і додаємо валідне тіло запиту:
-       {
+     ``` sh  {
         "url": "https://XXX/YYY.json",
         "strategy": "eventHub|redis"
-       }
+       } ```
  
  Програма логуватиме усі необхідні дані відповідно до логіки задачі. Для перевірки надісланих даних:
   1. Event Hub Ваш Event Hub > Features > Proccess Data > Explore
