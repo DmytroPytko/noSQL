@@ -10,6 +10,7 @@
  Для початку потрібно підключити azure subscription, щоб доступний увесь функціонал
  1. Створюємо resource group, до якої прив'язуватимуться усі наші сервіси.
  2. Створюємо Redis Cache Instance.
+  
   2a.Створюємо Shared Access Policy для генерації Connection String та Primary Key, що слугуватимуть як дані для надання доступу до нашого ресурсу з боку Jedis і його програмного виклику.
   ![redis](../img/lab5/redis.png)
  3. Створюємо Event Hub Namespace.
