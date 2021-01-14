@@ -1,0 +1,6 @@
+{
+  "event_hub": {
+    "conn_str": "Endpoint=sb://pytko9.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=yJl+ggUr6PYmJl7lEk+agBNGSfU9p7eA65G+ZV/sgAw=",
+    "eventhub_name": "pytko9"
+  }
+}
