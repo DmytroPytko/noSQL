@@ -1,20 +1,18 @@
-package com.lab5.resteventhub.web.rest;
+package com.lab5.resteventhub.controller;
 
+import com.lab5.resteventhub.LogService;
 import com.lab5.resteventhub.dto.RequestDTO;
 import com.lab5.resteventhub.service.SendDataService;
-import com.lab5.resteventhub.LogService;
-import org.springframework.stereotype.Controller;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 public class URLController {
 
+    @Autowired
     private LogService logService;
-
-    public URLController(LogService logService) {
-        this.logService = logService;
-    }
 
     @PostMapping("/url")
     public void addNewUrl(@RequestBody RequestDTO dto) {

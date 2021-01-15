@@ -6,8 +6,10 @@ import com.microsoft.azure.eventhubs.ConnectionStringBuilder;
 import com.microsoft.azure.eventhubs.EventData;
 import com.microsoft.azure.eventhubs.EventHubClient;
 import com.microsoft.azure.eventhubs.EventHubException;
+import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -21,16 +23,27 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 @Service
+@Slf4j
 public class SendDataEventHubImpl implements SendDataService {
+
+    @Value("${connection.namespace.name}")
+    private String namespaceName;
+
+    @Value("${connection.eventhub.name}")
+    private String eventHubName;
+
+    @Value("${connection.saskey.name}")
+    private String sasKeyName;
+
+    @Value("${connection.saskey}")
+    private String sasKey;
 
     public void sendAndLog(String url) throws IOException, EventHubException {
         final ConnectionStringBuilder connStr = new ConnectionStringBuilder()
-                .setNamespaceName("pytkohub")//namespace
-                .setEventHubName("pytkod")//hub name
-                /*Connection string–primary key*/
-                .setSasKeyName("Endpoint=sb://pytkohub.servicebus.windows.net/;SharedAccessKeyName=pytkopolicy;SharedAccessKey=xrrT0bjaWabCbcYQLKUmkoZ4GWoKyLtjjdTZ6yn+/1I=;EntityPath=pytkod")
-                /*Primary key*/
-                .setSasKey("xrrT0bjaWabCbcYQLKUmkoZ4GWoKyLtjjdTZ6yn+/1I=");
+                .setNamespaceName(namespaceName)
+                .setEventHubName(eventHubName)
+                .setSasKeyName(sasKeyName)
+                .setSasKey(sasKey);
 
         final Gson gson = new GsonBuilder().create();
         final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(4);
@@ -39,7 +52,6 @@ public class SendDataEventHubImpl implements SendDataService {
         try {
             URL data = new URL(url);
             HttpURLConnection con = (HttpURLConnection) data.openConnection();
-            int responseCode = con.getResponseCode();
             BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream()));
             String inputLine;
             StringBuilder response = new StringBuilder();
@@ -51,8 +63,8 @@ public class SendDataEventHubImpl implements SendDataService {
             JSONArray jsonArray = new JSONArray(response.toString());
             showData(jsonArray, gson, ehClient);
 
-            System.out.println(Instant.now() + ": Send Complete...");
-            System.out.println("Press Enter to stop.");
+            log.info(Instant.now() + ": Send Complete...");
+            log.info("Press Enter to stop.");
             System.in.read();
         } finally {
             ehClient.closeSync();
@@ -63,7 +75,7 @@ public class SendDataEventHubImpl implements SendDataService {
     public void showData(JSONArray jsonArray, Gson gson, EventHubClient ehClient) throws EventHubException {
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = (JSONObject) jsonArray.get(i);
-            System.out.println("Document: " + i);
+            log.info("Document: " + i);
             byte[] payloadBytes = gson.toJson(jsonObject).getBytes(Charset.defaultCharset());
             EventData sendEvent = EventData.create(payloadBytes);
 

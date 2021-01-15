@@ -3,19 +3,26 @@ package com.lab5.resteventhub;
 import com.lab5.resteventhub.service.SendDataConsoleImpl;
 import com.lab5.resteventhub.service.SendDataEventHubImpl;
 import com.lab5.resteventhub.service.SendDataService;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import java.util.Collection;
+import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
-@Component
+@Service
 public class LogService {
+
+    @Autowired
+    private SendDataEventHubImpl sendDataEventHub;
+
+    @Autowired
+    private SendDataConsoleImpl sendDataConsole;
 
     private Map<String, SendDataService> logServiceMap;
 
-    public LogService() {
+    @PostConstruct
+    public void initMap() {
         logServiceMap = createStrategies();
     }
 
@@ -23,18 +30,10 @@ public class LogService {
         return logServiceMap.get(repositoryName);
     }
 
-    public Set<String> getAllNames() {
-        return logServiceMap.keySet();
-    }
-
-    public Collection<SendDataService> getAllServices(){
-        return logServiceMap.values();
-    }
-
-    private Map<String, SendDataService> createStrategies(){
+    private Map<String, SendDataService> createStrategies() {
         Map<String, SendDataService> strategies = new HashMap<>();
-        strategies.put("eventHub", new SendDataEventHubImpl());
-        strategies.put("redis", new SendDataConsoleImpl());
+        strategies.put("eventHub", sendDataEventHub);
+        strategies.put("redis", sendDataConsole);
         return strategies;
     }
 }

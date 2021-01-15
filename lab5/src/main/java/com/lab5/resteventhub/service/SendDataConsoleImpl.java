@@ -1,6 +1,8 @@
 package com.lab5.resteventhub.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisShardInfo;
@@ -13,22 +15,32 @@ import java.net.URL;
 import java.util.Map;
 
 @Service
+@Slf4j
 public class SendDataConsoleImpl implements SendDataService {
 
-    private static final boolean USE_SSL = true;
-    private static final int MAX_NUMBER = 1000;
+    @Value("${use.ssl}")
+    private boolean USE_SSL;
 
-    private final static String CACHE_HOSTNAME = "pytkoredis.redis.cache.windows.net";
-    private final static String CACHE_KEY = "RPeSdCeuJiAW18PhR0+cFS180NbOsX0klFJHuTjD8cc=";
-    private final static String MAP_NAME = "ConsoleLog";
-    private final static String FILE_NAME = "service.impl.Console";
-    private final static int PORT = 6380;
+    @Value("${max.number}")
+    private int MAX_NUMBER;
+
+    @Value("${cache.hostname}")
+    private String CACHE_HOSTNAME;
+
+    @Value("${cache.key}")
+    private String CACHE_KEY;
+
+    @Value("${map.name}")
+    private String MAP_NAME;
+
+    @Value("${file.name}")
+    private String FILE_NAME;
+
+    @Value("${dataservice.port}")
+    private int PORT;
 
     public void sendAndLog(String url) {
-        JedisShardInfo info = new JedisShardInfo(CACHE_HOSTNAME, PORT, USE_SSL);
-        info.setPassword(CACHE_KEY);
-        Jedis jedis = new Jedis(info);
-
+        Jedis jedis = getJedis();
         try {
             URL data = new URL(url);
             HttpURLConnection con = (HttpURLConnection) data.openConnection();
@@ -44,13 +56,12 @@ public class SendDataConsoleImpl implements SendDataService {
             int limit = 100;
             int endRaw = 0;
             if (checkIfFileExist(jedis, redisData)) {
-
                 while ((inputLine = br.readLine()) != null) {
                     response.append(inputLine);
                     if (count == limit) {
                         jsonArray = new JSONArray(response.toString() + ']');
-                        System.out.println(response.toString());
-                        System.out.println("LENGTH: " + jsonArray.length());
+                        log.info(response.toString());
+                        log.info("LENGTH: " + jsonArray.length());
                         endRaw = endRaw + count;
                         jedis.set("Raws", startRaw + ":" + endRaw);
                         startRaw = startRaw + count;
@@ -66,19 +77,25 @@ public class SendDataConsoleImpl implements SendDataService {
         }
     }
 
+    private Jedis getJedis() {
+        JedisShardInfo info = new JedisShardInfo(CACHE_HOSTNAME, PORT, USE_SSL);
+        info.setPassword(CACHE_KEY);
+        return new Jedis(info);
+    }
+
     public void showData(int count, JSONArray jsonArray, Jedis jedis, Map<String, String> map) {
         jedis.hset(MAP_NAME, "Raws", "" + count);
         if (jsonArray.length() != MAX_NUMBER) {
-            System.out.println("Raws from file " + "'" + FILE_NAME + "': " + jedis.get("Raws"));
+            log.info("Raws from file " + "'" + FILE_NAME + "': " + jedis.get("Raws"));
             jedis.hset(MAP_NAME, "File", FILE_NAME);
 
             jedis.hset(MAP_NAME, "Status", "NotFinished");
         } else {
-            System.out.println("Raws from file " + "'" + FILE_NAME + "': " + jedis.get("Raws"));
+            log.info("Raws from file " + "'" + FILE_NAME + "': " + jedis.get("Raws"));
             jedis.hset(MAP_NAME, "Raws", "" + count);
             jedis.hset(MAP_NAME, "Status", "Completed");
             jedis.hset(MAP_NAME, "Info", "First attempt to input this file");
-            System.out.println(map.get("Status"));
+            log.info(map.get("Status"));
             jedis.close();
         }
     }
@@ -93,7 +110,7 @@ public class SendDataConsoleImpl implements SendDataService {
         } else {
             if (status.equals("Completed")) {
                 jedis.hset(MAP_NAME, "Info", "Retry to input this file");
-                System.out.println("Such file: " + "'" + FILE_NAME + "'" + " already exists. Application stop");
+                log.info("Such file: " + "'" + FILE_NAME + "'" + " already exists. Application stop");
                 jedis.close();
                 return false;
             }
