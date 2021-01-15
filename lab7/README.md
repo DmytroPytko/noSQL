@@ -16,3 +16,48 @@
  
 4.Наш фільтр
 ![date-filter](../img/lab7/date-filter.png)
+
+# Kibana DevTools
+
+1. Топ-3 за полем map.date_of_last_change
+```
+GET _search
+{
+"size": 0,
+"aggs" : {
+    "langs" : {
+        "terms" : { "field" : "map.date_of_last_change",  "size" : 3 }
+    }
+}}
+```
+
+![1](../img/lab7/1.png)
+
+2. Фільтрація записів за датою
+```
+GET _search
+{
+  "query": {
+    "bool": {
+      "filter": {
+        "bool": {
+          "must": [
+            {
+              "range": {
+                "map.date_of_last_change": {
+                  "gt": "2014-03-11T00:00:00.000Z",
+                  "lte": "2015-03-11T00:00:00.000Z"
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}
+```
+
+![2(../img/7/2.png)
+
+![3(../img/7/3.png)
