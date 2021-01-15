@@ -58,6 +58,6 @@ GET _search
 }
 ```
 
-![2(../img/7/2.png)
+![get1(../img/7/get1.png)
 
-![3(../img/7/3.png)
+![get2(../img/7/get2.png)
